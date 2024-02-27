@@ -19,29 +19,26 @@ for (let i = 0; i < 8; i++) {
   pieces.push({ image: "assets/images/Chess_plt60.png", x: i, y: 1 });
 }
 
-//Rooks
-pieces.push({ image: "assets/images/Chess_rdt60.png", x: 0, y: 7 });
-pieces.push({ image: "assets/images/Chess_rdt60.png", x: 7, y: 7 });
-pieces.push({ image: "assets/images/Chess_rlt60.png", x: 0, y: 0 });
-pieces.push({ image: "assets/images/Chess_rlt60.png", x: 7, y: 0 });
+for (let p = 0; p < 2; p++) {
+  const type = p === 0 ? "d" : "l";
+  const y = p === 0 ? 7 : 0;
 
-//knights
-pieces.push({ image: "assets/images/Chess_ndt60.png", x: 1, y: 7 });
-pieces.push({ image: "assets/images/Chess_ndt60.png", x: 6, y: 7 });
-pieces.push({ image: "assets/images/Chess_nlt60.png", x: 1, y: 0 });
-pieces.push({ image: "assets/images/Chess_nlt60.png", x: 6, y: 0 });
+  //Rooks
+  pieces.push({ image: `assets/images/Chess_r${type}t60.png`, x: 0, y });
+  pieces.push({ image: `assets/images/Chess_r${type}t60.png`, x: 7, y });
 
-//Bishops
-pieces.push({ image: "assets/images/Chess_bdt60.png", x: 2, y: 7 });
-pieces.push({ image: "assets/images/Chess_bdt60.png", x: 5, y: 7 });
-pieces.push({ image: "assets/images/Chess_blt60.png", x: 2, y: 0 });
-pieces.push({ image: "assets/images/Chess_blt60.png", x: 5, y: 0 });
+  //knights
+  pieces.push({ image: `assets/images/Chess_n${type}t60.png`, x: 1, y });
+  pieces.push({ image: `assets/images/Chess_n${type}t60.png`, x: 6, y });
 
-//King and Queen both black and white
-pieces.push({ image: "assets/images/Chess_kdt60.png", x: 4, y: 7 });
-pieces.push({ image: "assets/images/Chess_klt60.png", x: 4, y: 0 });
-pieces.push({ image: "assets/images/Chess_qdt60.png", x: 3, y: 7 });
-pieces.push({ image: "assets/images/Chess_qlt60.png", x: 3, y: 0 });
+  //Bishops
+  pieces.push({ image: `assets/images/Chess_b${type}t60.png`, x: 2, y });
+  pieces.push({ image: `assets/images/Chess_b${type}t60.png`, x: 5, y });
+
+  //King and Queen both black and white
+  pieces.push({ image: `assets/images/Chess_k${type}t60.png`, x: 4, y });
+  pieces.push({ image: `assets/images/Chess_q${type}t60.png`, x: 3, y });
+}
 
 export default function chessboard() {
   let board = [];
