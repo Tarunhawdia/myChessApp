@@ -39,9 +39,8 @@ for (let p = 0; p < 2; p++) {
   pieces.push({ image: `assets/images/Chess_k${type}t60.png`, x: 4, y });
   pieces.push({ image: `assets/images/Chess_q${type}t60.png`, x: 3, y });
 }
-
-export default function Chessboard() {
-  const chessboardRef = useRef<HTMLDivElement | null>(null);
+export default function chessboard() {
+  const chessboardRef = useRef(null);
 
   let activePiece: HTMLElement | null = null;
   function grabPiece(e: React.MouseEvent) {
@@ -57,34 +56,14 @@ export default function Chessboard() {
       activePiece = element;
     }
   }
-
   function movePiece(e: React.MouseEvent) {
-    const chessboard = chessboardRef.current;
-    if (activePiece && chessboard) {
-      const minX = chessboard.offsetLeft - 25;
-      const minY = chessboard.offsetTop - 25;
-      const maxX = chessboard.offsetLeft + chessboard.clientWidth - 75;
-      const maxY = chessboard.offsetTop + chessboard.clientHeight - 75;
+    if (activePiece) {
       const x = e.clientX - 50;
       const y = e.clientY - 50;
 
       activePiece.style.position = "absolute";
-
-      if (x < minX) {
-        activePiece.style.left = `${minX}px`;
-      } else if (x > maxX) {
-        activePiece.style.left = `${maxX}px`;
-      } else {
-        activePiece.style.left = `${x}px`;
-      }
-
-      if (y < minY) {
-        activePiece.style.top = `${minY}px`;
-      } else if (y > maxY) {
-        activePiece.style.top = `${maxY}px`;
-      } else {
-        activePiece.style.top = `${y}px`;
-      }
+      activePiece.style.left = `${x}px`;
+      activePiece.style.top = `${y}px`;
     }
   }
 
