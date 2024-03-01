@@ -20,6 +20,16 @@ export default class Referee {
             return true;
           }
         }
+      } else {
+        if (py == 6) {
+          if (px == x && (py - y === 1 || py - y === 2)) {
+            return true;
+          }
+        } else {
+          if (px === x && py - y === 1) {
+            return true;
+          }
+        }
       }
     }
     return false;
