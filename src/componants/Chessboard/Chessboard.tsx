@@ -27,25 +27,6 @@ export enum PieceType {
 }
 const initialBoardState: Piece[] = [];
 
-for (let i = 0; i < 8; i++) {
-  initialBoardState.push({
-    image: "assets/images/Chess_pdt60.png",
-    x: i,
-    y: 6,
-    type: PieceType.PAWN,
-    team: TeamType.OPPONENT,
-  });
-}
-for (let i = 0; i < 8; i++) {
-  initialBoardState.push({
-    image: "assets/images/Chess_plt60.png",
-    x: i,
-    y: 1,
-    type: PieceType.PAWN,
-    team: TeamType.OUR,
-  });
-}
-
 for (let p = 0; p < 2; p++) {
   const teamType = p === 0 ? TeamType.OPPONENT : TeamType.OUR;
   const type = teamType === TeamType.OPPONENT ? "d" : "l";
@@ -113,6 +94,25 @@ for (let p = 0; p < 2; p++) {
     y,
     type: PieceType.QUEEN,
     team: teamType,
+  });
+}
+
+for (let i = 0; i < 8; i++) {
+  initialBoardState.push({
+    image: "assets/images/Chess_pdt60.png",
+    x: i,
+    y: 6,
+    type: PieceType.PAWN,
+    team: TeamType.OPPONENT,
+  });
+}
+for (let i = 0; i < 8; i++) {
+  initialBoardState.push({
+    image: "assets/images/Chess_plt60.png",
+    x: i,
+    y: 1,
+    type: PieceType.PAWN,
+    team: TeamType.OUR,
   });
 }
 
