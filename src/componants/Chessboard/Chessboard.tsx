@@ -95,7 +95,7 @@ export default function Chessboard() {
     if (element.classList.contains("chess-piece") && chessboard) {
       setGridX(Math.floor((e.clientX - chessboard.offsetLeft) / 100));
       setGridY(
-        Math.abs(Math.ceil(e.clientY - chessboard.offsetTop - 800) / 100),
+        Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100)),
       );
 
       const x = e.clientX - 50;
@@ -145,7 +145,7 @@ export default function Chessboard() {
     if (activePiece && chessboard) {
       const x = Math.floor((e.clientX - chessboard.offsetLeft) / 100);
       const y = Math.abs(
-        Math.ceil(e.clientY - chessboard.offsetTop - 800) / 100,
+        Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100),
       );
 
       setPieces((value) => {
