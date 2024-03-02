@@ -130,11 +130,8 @@ export default function Chessboard() {
           }, [] as Piece[]);
           setPieces(updatedPieces);
         } else if (validMove) {
-          //UPDATES THE PIECE POSITION
-          //AND IF A PIECE IS ATTACKED, REMOVES IT
           const updatedPieces = pieces.reduce((results, piece) => {
             if (samePosition(piece.position, grabPosition)) {
-              //SPECIAL MOVE
               piece.enPassant =
                 Math.abs(grabPosition.y - y) === 2 &&
                 piece.type === PieceType.PAWN;
