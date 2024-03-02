@@ -12,6 +12,7 @@ export interface Piece {
   y: number;
   type: PieceType;
   team: TeamType;
+  enPassant?: boolean;
 }
 export enum TeamType {
   OPPONENT,
@@ -198,15 +199,52 @@ export default function Chessboard() {
           pieces,
         );
 
-        if (validMove) {
+        const isEnpassantMove = referee.isEnPassantMove(
+          gridX,
+          gridY,
+          x,
+          y,
+          currentPiece.type,
+          currentPiece.team,
+          pieces,
+        );
+
+        const pawnDirection = currentPiece.team === TeamType.OUR ? 1 : -1;
+        if (isEnpassantMove) {
+          const updatedPieces = pieces.reduce((results, piece) => {
+            if (piece.x === gridX && piece.y === gridY) {
+              piece.enPassant = false;
+              piece.x = x;
+              piece.y = y;
+              results.push(piece);
+            } else if (!(piece.x === x && piece.y === y - pawnDirection)) {
+              if (piece.type === PieceType.PAWN) {
+                piece.enPassant = false;
+              }
+              results.push(piece);
+            }
+
+            return results;
+          }, [] as Piece[]);
+          setPieces(updatedPieces);
+        } else if (validMove) {
           //UPDATES THE PIECE POSITION
           //AND IF A PIECE IS ATTACKED, REMOVES IT
           const updatedPieces = pieces.reduce((results, piece) => {
-            if (piece.x === currentPiece.x && piece.y === currentPiece.y) {
+            if (piece.x === gridX && piece.y === gridY) {
+              if (Math.abs(gridY - y) === 2 && piece.type === PieceType.PAWN) {
+                //speical move
+                piece.enPassant = true;
+              } else {
+                piece.enPassant = false;
+              }
               piece.x = x;
               piece.y = y;
               results.push(piece);
             } else if (!(piece.x === x && piece.y === y)) {
+              if (piece.type === PieceType.PAWN) {
+                piece.enPassant = false;
+              }
               results.push(piece);
             }
             return results;
