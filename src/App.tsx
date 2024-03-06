@@ -1,12 +1,11 @@
 import "./App.css";
-import Chessboard from "./componants/Chessboard/Chessboard";
+import Referee from "./componants/Referee/Referee";
 
 function App() {
   return (
     <div id="app">
-      <Chessboard />
+      <Referee />
     </div>
   );
 }
-
 export default App;
