@@ -17,13 +17,23 @@ import {
 export default function Chessboard() {
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
   const [grabPosition, setGrabPosition] = useState<Position>({ x: -1, y: -1 });
-  const referee = new Referee();
   const [pieces, setPieces] = useState<Piece[]>(initialBoardState);
   const chessboardRef = useRef<HTMLDivElement>(null);
   const [promotionPawn, setPromotionPawn] = useState<Piece>();
   const modalRef = useRef<HTMLDivElement>(null);
+  const referee = new Referee();
+
+  function updateValidMoves() {
+    setPieces((currentPieces) => {
+      return currentPieces.map((p) => {
+        p.possibleMoves = referee.getValidMoves(p, currentPieces);
+        return p;
+      });
+    });
+  }
 
   function grabPiece(e: React.MouseEvent) {
+    updateValidMoves();
     const element = e.target as HTMLElement;
     const chessboard = chessboardRef.current;
 
@@ -221,7 +231,24 @@ export default function Chessboard() {
       );
       let image = piece ? piece.image : undefined;
 
-      board.push(<Tile key={`${j},${i}`} image={image} number={number} />);
+      let currentPiece =
+        activePiece != null
+          ? pieces.find((p) => samePosition(p.position, grabPosition))
+          : undefined;
+      let highlight = currentPiece?.possibleMoves
+        ? currentPiece.possibleMoves.some((p) =>
+            samePosition(p, { x: i, y: j }),
+          )
+        : false;
+
+      board.push(
+        <Tile
+          key={`${j},${i}`}
+          image={image}
+          number={number}
+          highlight={highlight}
+        />,
+      );
     }
   }
 
