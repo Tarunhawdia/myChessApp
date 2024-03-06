@@ -1,10 +1,5 @@
-import {
-  Piece,
-  PieceType,
-  Position,
-  samePosition,
-  TeamType,
-} from "../../Constants";
+import { PieceType, samePosition, TeamType } from "../../Constants";
+import { Piece, Position } from "../../models";
 import {
   tileIsEmptyOrOccupiedByOpponent,
   tileIsOccupied,
@@ -29,7 +24,7 @@ export const pawnMove = (
     if (
       !tileIsOccupied(desiredPosition, boardState) &&
       !tileIsOccupied(
-        { x: desiredPosition.x, y: desiredPosition.y - pawnDirection },
+        new Position(desiredPosition.x, desiredPosition.y - pawnDirection),
         boardState,
       )
     ) {
@@ -74,27 +69,21 @@ export const getPossiblePawnMoves = (
   const specialRow = pawn.team === TeamType.OUR ? 1 : 6;
   const pawnDirection = pawn.team === TeamType.OUR ? 1 : -1;
 
-  const normalMove: Position = {
-    x: pawn.position.x,
-    y: pawn.position.y + pawnDirection,
-  };
-  const specialMove: Position = {
-    x: normalMove.x,
-    y: normalMove.y + pawnDirection,
-  };
-  const upperLeftAttack: Position = {
-    x: pawn.position.x - 1,
-    y: pawn.position.y + pawnDirection,
-  };
-  const upperRightAttack: Position = {
-    x: pawn.position.x + 1,
-    y: pawn.position.y + pawnDirection,
-  };
-  const leftPosition: Position = { x: pawn.position.x - 1, y: pawn.position.y };
-  const rightPosition: Position = {
-    x: pawn.position.x + 1,
-    y: pawn.position.y,
-  };
+  const normalMove = new Position(
+    pawn.position.x,
+    pawn.position.y + pawnDirection,
+  );
+  const specialMove = new Position(normalMove.x, normalMove.y + pawnDirection);
+  const upperLeftAttack = new Position(
+    pawn.position.x - 1,
+    pawn.position.y + pawnDirection,
+  );
+  const upperRightAttack = new Position(
+    pawn.position.x + 1,
+    pawn.position.y + pawnDirection,
+  );
+  const leftPosition = new Position(pawn.position.x - 1, pawn.position.y);
+  const rightPosition = new Position(pawn.position.x + 1, pawn.position.y);
 
   if (!tileIsOccupied(normalMove, boardState)) {
     possibleMoves.push(normalMove);
