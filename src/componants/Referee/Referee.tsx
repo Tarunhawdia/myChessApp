@@ -1,12 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  initialBoardState,
-  PieceType,
-  samePosition,
-  TeamType,
-} from "../../Constants";
+import { initialBoardState } from "../../Constants";
 import { Piece, Position } from "../../models";
 
+import { Pawn } from "../../models/Pawn";
+import { PieceType, TeamType } from "../../Types";
 import {
   bishopMove,
   getPossibleBishopMoves,
@@ -60,19 +57,18 @@ export default function Referee() {
 
     if (enPassantMove) {
       const updatedPieces = pieces.reduce((results, piece) => {
-        if (samePosition(piece.position, playedPiece.position)) {
-          piece.enPassant = false;
+        if (piece.samePiecePosition(playedPiece)) {
+          if (piece.isPawn) (piece as Pawn).enPassant = false;
           piece.position.x = destination.x;
           piece.position.y = destination.y;
           results.push(piece);
         } else if (
-          !samePosition(
-            piece.position,
+          !piece.samePosition(
             new Position(destination.x, destination.y - pawnDirection),
           )
         ) {
-          if (piece.type === PieceType.PAWN) {
-            piece.enPassant = false;
+          if (piece.isPawn) {
+            (piece as Pawn).enPassant = false;
           }
           results.push(piece);
         }
@@ -86,11 +82,12 @@ export default function Referee() {
       //UPDATES THE PIECE POSITION
       //AND IF A PIECE IS ATTACKED, REMOVES IT
       const updatedPieces = pieces.reduce((results, piece) => {
-        if (samePosition(piece.position, playedPiece.position)) {
+        if (piece.samePiecePosition(playedPiece)) {
           //SPECIAL MOVE
-          piece.enPassant =
-            Math.abs(playedPiece.position.y - destination.y) === 2 &&
-            piece.type === PieceType.PAWN;
+          if (piece.isPawn)
+            (piece as Pawn).enPassant =
+              Math.abs(playedPiece.position.y - destination.y) === 2 &&
+              piece.type === PieceType.PAWN;
 
           piece.position.x = destination.x;
           piece.position.y = destination.y;
@@ -103,13 +100,10 @@ export default function Referee() {
           }
           results.push(piece);
         } else if (
-          !samePosition(
-            piece.position,
-            new Position(destination.x, destination.y),
-          )
+          !piece.samePosition(new Position(destination.x, destination.y))
         ) {
-          if (piece.type === PieceType.PAWN) {
-            piece.enPassant = false;
+          if (piece.isPawn) {
+            (piece as Pawn).enPassant = false;
           }
           results.push(piece);
         }
@@ -143,7 +137,8 @@ export default function Referee() {
           (p) =>
             p.position.x === desiredPosition.x &&
             p.position.y === desiredPosition.y - pawnDirection &&
-            p.enPassant,
+            p.isPawn &&
+            (p as Pawn).enPassant,
         );
         if (piece) {
           return true;
@@ -154,13 +149,6 @@ export default function Referee() {
     return false;
   }
 
-  //TODO
-  //Pawn promotion!
-  //Prevent the king from moving into danger!
-  //Add castling!
-  //Add check!
-  //Add checkmate!
-  //Add stalemate!
   function isValidMove(
     initialPosition: Position,
     desiredPosition: Position,
@@ -216,7 +204,7 @@ export default function Referee() {
     }
 
     const updatedPieces = pieces.reduce((results, piece) => {
-      if (samePosition(piece.position, promotionPawn.position)) {
+      if (piece.samePiecePosition(promotionPawn)) {
         piece.type = pieceType;
         const teamType = piece.team === TeamType.OUR ? "w" : "b";
         let image = "";
