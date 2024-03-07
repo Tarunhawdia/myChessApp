@@ -26,15 +26,18 @@ export default function Referee() {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    updatePossibleMoves();
+    board.calculateAllMoves();
   }, []);
 
-  function updatePossibleMoves() {
-    board.calculateAllMoves();
-  }
-
   function playMove(playedPiece: Piece, destination: Position): boolean {
+    // If the playing piece doesn't have any moves return
     if (playedPiece.possibleMoves === undefined) return false;
+
+    // Prevent the inactive team from playing
+    if (playedPiece.team === TeamType.OUR && board.totalTurns % 2 !== 1)
+      return false;
+    if (playedPiece.team === TeamType.OPPONENT && board.totalTurns % 2 !== 0)
+      return false;
 
     let playedMoveIsValid = false;
 
@@ -54,15 +57,17 @@ export default function Referee() {
     // playMove modifies the board thus we
     // need to call setBoard
     setBoard((previousBoard) => {
+      const clonedBoard = board.clone();
+      clonedBoard.totalTurns += 1;
       // Playing the move
-      playedMoveIsValid = board.playMove(
+      playedMoveIsValid = clonedBoard.playMove(
         enPassantMove,
         validMove,
         playedPiece,
         destination,
       );
 
-      return board.clone();
+      return clonedBoard;
     });
 
     // This is for promoting a pawn
@@ -210,6 +215,7 @@ export default function Referee() {
 
   return (
     <>
+      <p style={{ color: "white", fontSize: "24px" }}>{board.totalTurns}</p>
       <div id="pawn-promotion-modal" className="hidden" ref={modalRef}>
         <div className="modal-body">
           <img
