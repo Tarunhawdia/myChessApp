@@ -1,6 +1,7 @@
 import { TeamType } from "../../Types";
 import { Piece, Position } from "../../models";
 import { tileIsOccupied, tileIsOccupiedByOpponent } from "./GeneralRules";
+import { Pawn } from "../../models/Pawn";
 
 export const pawnMove = (
   initialPosition: Position,
@@ -96,8 +97,7 @@ export const getPossiblePawnMoves = (
     possibleMoves.push(upperLeftAttack);
   } else if (!tileIsOccupied(upperLeftAttack, boardState)) {
     const leftPiece = boardState.find((p) => p.samePosition(leftPosition));
-    if (leftPiece != null) {
-      //} && leftPiece.enPassant) {
+    if (leftPiece != null && (leftPiece as Pawn).enPassant) {
       possibleMoves.push(upperLeftAttack);
     }
   }
@@ -106,8 +106,7 @@ export const getPossiblePawnMoves = (
     possibleMoves.push(upperRightAttack);
   } else if (!tileIsOccupied(upperRightAttack, boardState)) {
     const rightPiece = boardState.find((p) => p.samePosition(rightPosition));
-    if (rightPiece != null) {
-      //} && rightPiece.enPassant) {
+    if (rightPiece != null && (rightPiece as Pawn).enPassant) {
       possibleMoves.push(upperRightAttack);
     }
   }
