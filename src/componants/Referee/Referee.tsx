@@ -21,13 +21,10 @@ import { PieceType, TeamType } from "../../Types";
 import Chessboard from "../Chessboard/Chessboard";
 
 export default function Referee() {
-  const [board, setBoard] = useState<Board>(initialBoard);
+  const [board, setBoard] = useState<Board>(initialBoard.clone());
   const [promotionPawn, setPromotionPawn] = useState<Piece>();
   const modalRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    board.calculateAllMoves();
-  }, []);
+  const checkmateModalRef = useRef<HTMLDivElement>(null);
 
   function playMove(playedPiece: Piece, destination: Position): boolean {
     // If the playing piece doesn't have any moves return
@@ -56,7 +53,7 @@ export default function Referee() {
 
     // playMove modifies the board thus we
     // need to call setBoard
-    setBoard((previousBoard) => {
+    setBoard(() => {
       const clonedBoard = board.clone();
       clonedBoard.totalTurns += 1;
       // Playing the move
@@ -66,6 +63,10 @@ export default function Referee() {
         playedPiece,
         destination,
       );
+
+      if (clonedBoard.winningTeam !== undefined) {
+        checkmateModalRef.current?.classList.remove("hidden");
+      }
 
       return clonedBoard;
     });
@@ -106,7 +107,6 @@ export default function Referee() {
             p.isPawn &&
             (p as Pawn).enPassant,
         );
-        console.log(piece);
         if (piece) {
           return true;
         }
@@ -117,11 +117,6 @@ export default function Referee() {
   }
 
   //TODO
-  //Pawn promotion!
-  //Prevent the king from moving into danger!
-  //Add castling!
-  //Add check!
-  //Add checkmate!
   //Add stalemate!
   function isValidMove(
     initialPosition: Position,
@@ -193,7 +188,7 @@ export default function Referee() {
       clonedBoard.pieces = clonedBoard.pieces.reduce((results, piece) => {
         if (piece.samePiecePosition(promotionPawn)) {
           results.push(
-            new Piece(piece.position.clone(), pieceType, piece.team),
+            new Piece(piece.position.clone(), pieceType, piece.team, true),
           );
         } else {
           results.push(piece);
@@ -213,10 +208,17 @@ export default function Referee() {
     return promotionPawn?.team === TeamType.OUR ? "w" : "b";
   }
 
+  function restartGame() {
+    checkmateModalRef.current?.classList.add("hidden");
+    setBoard(initialBoard.clone());
+  }
+
   return (
     <>
-      <p style={{ color: "white", fontSize: "24px" }}>{board.totalTurns}</p>
-      <div id="pawn-promotion-modal" className="hidden" ref={modalRef}>
+      <p style={{ color: "white", fontSize: "24px", textAlign: "center" }}>
+        Total turns: {board.totalTurns}
+      </p>
+      <div className="modal hidden" ref={modalRef}>
         <div className="modal-body">
           <img
             onClick={() => promotePawn(PieceType.ROOK)}
@@ -234,6 +236,17 @@ export default function Referee() {
             onClick={() => promotePawn(PieceType.QUEEN)}
             src={`/assets/images/queen_${promotionTeamType()}.png`}
           />
+        </div>
+      </div>
+      <div className="modal hidden" ref={checkmateModalRef}>
+        <div className="modal-body">
+          <div className="checkmate-body">
+            <span>
+              The winning team is{" "}
+              {board.winningTeam === TeamType.OUR ? "white" : "black"}!
+            </span>
+            <button onClick={restartGame}>Play again</button>
+          </div>
         </div>
       </div>
       <Chessboard playMove={playMove} pieces={board.pieces} />

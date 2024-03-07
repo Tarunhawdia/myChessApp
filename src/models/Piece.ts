@@ -1,5 +1,5 @@
-import { Position } from "./Position";
 import { TeamType, PieceType } from "../Types";
+import { Position } from "./Position";
 
 export class Piece {
   image: string;
@@ -7,11 +7,12 @@ export class Piece {
   type: PieceType;
   team: TeamType;
   possibleMoves?: Position[];
-
+  hasMoved: boolean;
   constructor(
     position: Position,
     type: PieceType,
     team: TeamType,
+    hasMoved: boolean,
     possibleMoves: Position[] = [],
   ) {
     this.image = `assets/images/${type}_${team}.png`;
@@ -19,6 +20,7 @@ export class Piece {
     this.type = type;
     this.team = team;
     this.possibleMoves = possibleMoves;
+    this.hasMoved = hasMoved;
   }
 
   get isPawn(): boolean {
@@ -52,11 +54,13 @@ export class Piece {
   samePosition(otherPosition: Position): boolean {
     return this.position.samePosition(otherPosition);
   }
+
   clone(): Piece {
     return new Piece(
       this.position.clone(),
       this.type,
       this.team,
+      this.hasMoved,
       this.possibleMoves?.map((m) => m.clone()),
     );
   }
